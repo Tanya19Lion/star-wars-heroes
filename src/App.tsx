@@ -13,15 +13,12 @@ const App = () => {
 	return (
 		<QueryClientProvider client={queryClient}>
 			 <div className="min-h-screen bg-black text-gray-100 flex flex-col items-center">
-				{/* Sidebar */}
-				{/* <aside className="md:w-80 w-full bg-sw-gray border-b md:border-b-0 md:border-r border-gray-800 flex flex-col"> */}
-					<h1 className="text-sw-yellow text-3xl md:text-4xl font-bold text-center py-6 tracking-widest">
-						Star Wars Explorer
-					</h1>
-					<ErrorBoundary FallbackComponent={HeroListFallback} onReset={() => window.location.reload()}>
-						<HeroList onSelect={(id) => setSelectedHeroId(id)} selectedHeroId={selectedHeroId}/>
-					</ErrorBoundary>
-				{/* </aside> */}
+				<h1 className="text-sw-yellow text-3xl md:text-4xl font-bold text-center py-6 tracking-widest">
+					Star Wars Explorer
+				</h1>
+				<ErrorBoundary FallbackComponent={HeroListFallback} onReset={() => window.location.reload()}>
+					<HeroList onSelect={(id) => setSelectedHeroId(id)} selectedHeroId={selectedHeroId}/>
+				</ErrorBoundary>
 
 				{/* Main panel */}
 				<main className="w-full flex justify-center mt-6 px-4 relative">
