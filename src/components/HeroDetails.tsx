@@ -9,7 +9,7 @@ import type { Hero } from '../types/index.ts';
 import { HeroDetailsSkeleton } from './HeroDetailsSkeleton';
 
 type HeroDetailsProps = {
-    heroId: string;
+    heroId: number;
     hero?: Hero;
 };
 

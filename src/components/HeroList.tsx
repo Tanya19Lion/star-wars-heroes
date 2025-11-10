@@ -1,17 +1,19 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useHeroes, useHeroesCount } from '../hooks/useHeroes';
 import { HeroCard } from './HeroCard';
 import { Skeleton } from './Skeleton';
 
 type HeroListProps = {
-    onSelect: (id: string) => void;
-    selectedHeroId: string | null;
+    onSelect: (id: number) => void;
+    selectedHeroId: number | null;
 };
 
 export const HeroList = ({ onSelect, selectedHeroId }: HeroListProps) => {
     const [page, setPage] = useState(1);
     const { data, isLoading } = useHeroes(page);
     const { data: total } = useHeroesCount();
+
+    const handleSelect = useCallback((id: number) => onSelect(id), [onSelect]);
 
     if (isLoading) {
         return (
@@ -32,7 +34,7 @@ export const HeroList = ({ onSelect, selectedHeroId }: HeroListProps) => {
                     const url = hero.url;
                     if (!url) return null;
 
-                    const heroId = getHeroId(url);
+                    const heroId = Number(getHeroId(url));
 
                     return (
                         <HeroCard
@@ -40,7 +42,7 @@ export const HeroList = ({ onSelect, selectedHeroId }: HeroListProps) => {
                             hero={hero}
                             heroId={heroId}
                             isSelected={selectedHeroId === heroId}
-                            onSelect={() => onSelect(heroId)}
+                            onSelect={() => handleSelect(heroId)}
                         />
                     );
                 })}

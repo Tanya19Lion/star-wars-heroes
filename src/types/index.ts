@@ -14,7 +14,7 @@ export type Hero = {
 }
 
 /** Full hero details for graph view */
-export type HeroDetails = {
+export type HeroDetailsType = {
     id: number;
     name: string;
     height?: string;

@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { Hero, HeroDetails } from '../types/index.ts';
+import type { Hero, HeroDetailsType, FilmSimplified, StarshipSimplified } from '../types/index.ts';
 
 type HeroesResponse = {
     count: number;
@@ -16,18 +16,18 @@ export const getHeroes = async (page = 1): Promise<Hero[]> => {
     return data.results;
 };
 
-export const getHeroDetails = async (id: string): Promise<HeroDetails> => {
+export const getHeroDetails = async (id: number): Promise<HeroDetailsType> => {
     const { data } = await api.get(`/people/${id}`);
     return data;
 };
 
-export const getFilm = async (id: number) => {
+export const getFilm = async (id: number): Promise<FilmSimplified> => {
     const { data } = await api.get(`/films/${id}/`);
     if (!data) throw new Error('Failed to fetch film ' + id);
     return data;
 };
 
-export const getStarship = async (id: number) => {
+export const getStarship = async (id: number): Promise<StarshipSimplified> => {
     const { data } = await api.get(`/starships/${id}/`);
     if (!data) throw new Error('Failed to fetch starship ' + id);
     return data;

@@ -15,14 +15,14 @@ describe('HeroCard', () => {
     };
 
     it('renders hero name and subtitle', () => {
-        render(<HeroCard hero={hero} heroId="1" isSelected={false} onSelect={() => {}} />);
+        render(<HeroCard hero={hero} heroId={1} isSelected={false} onSelect={() => {}} />);
         expect(screen.getByText('Luke Skywalker')).toBeInTheDocument();
         expect(screen.getByText('Click to view details')).toBeInTheDocument();
     });
 
     it('calls onSelect when clicked', () => {
         const handleSelect = vi.fn();
-        render(<HeroCard hero={hero} heroId='1' isSelected={false} onSelect={handleSelect} />);
+        render(<HeroCard hero={hero} heroId={1} isSelected={false} onSelect={handleSelect} />);
 
         fireEvent.click(screen.getByText('Luke Skywalker'));
         expect(handleSelect).toHaveBeenCalledTimes(1);
@@ -30,7 +30,7 @@ describe('HeroCard', () => {
 
     it('calls onSelect when Enter key is pressed', () => {
         const handleSelect = vi.fn();
-        render(<HeroCard hero={hero} heroId='1' isSelected={false} onSelect={handleSelect} />);
+        render(<HeroCard hero={hero} heroId={1} isSelected={false} onSelect={handleSelect} />);
 
         screen.getByText('Luke Skywalker').focus();
         fireEvent.keyDown(screen.getByText('Luke Skywalker'), { key: 'Enter' });

@@ -8,7 +8,7 @@ import { HeroListFallback, HeroDetailsFallback } from './components/ErrorFallbac
 const queryClient = new QueryClient();
 
 const App = () => {
-	const [selectedHeroId, setSelectedHeroId] = useState<string | null>(null);
+	const [selectedHeroId, setSelectedHeroId] = useState<number | null>(null);
 
 	return (
 		<QueryClientProvider client={queryClient}>

@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, vi, beforeEach } from 'vitest';
+import { describe, it, vi, beforeEach, type MockedFunction } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { HeroList } from '../components/HeroList';
 import type { Hero } from '../types';
 import { useHeroes, useHeroesCount } from '../hooks/useHeroes';
@@ -19,20 +20,35 @@ vi.mock('../hooks/useHeroes', () => ({
 
 // Helper to render with React Query provider
 const renderWithQuery = (ui: React.ReactElement) => {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+    const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+    });
+    return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+};
+
+type useHeroesMockReturn = UseQueryResult<Hero[], Error> & {
+    data: Hero[];
+    isLoading: boolean;
+};
+type useHeroesCountMockReturn = UseQueryResult<number, Error> & {
+    data: number;
+    isLoading: boolean;
 };
 
 describe('HeroList', () => {
+    let mockedUseHeroes: MockedFunction<typeof useHeroes>;
+    let mockedUseHeroesCount: MockedFunction<typeof useHeroesCount>;
+
     beforeEach(() => {
         vi.clearAllMocks();
+
+        mockedUseHeroes = useHeroes as MockedFunction<typeof useHeroes>;
+        mockedUseHeroesCount = useHeroesCount as MockedFunction<typeof useHeroesCount>;
     });
 
     it('renders a list of heroes', async () => {
-        (useHeroes as any).mockReturnValue({ data: heroes, isLoading: false });
-        (useHeroesCount as any).mockReturnValue({ data: heroes.length });
+        mockedUseHeroes.mockReturnValue({ data: heroes, isLoading: false } as useHeroesMockReturn);
+        mockedUseHeroesCount.mockReturnValue({ data: heroes.length, isLoading: false } as useHeroesCountMockReturn);
 
         renderWithQuery(<HeroList onSelect={() => {}} selectedHeroId={null} />);
 
@@ -43,8 +59,8 @@ describe('HeroList', () => {
 
     it('calls onSelect with heroId when a hero is clicked', async () => {
         const handleSelect = vi.fn();
-        (useHeroes as any).mockReturnValue({ data: heroes, isLoading: false });
-        (useHeroesCount as any).mockReturnValue({ data: heroes.length });
+        mockedUseHeroes.mockReturnValue({ data: heroes, isLoading: false } as useHeroesMockReturn);
+        mockedUseHeroesCount.mockReturnValue({ data: heroes.length, isLoading: false } as useHeroesCountMockReturn);
 
         renderWithQuery(<HeroList onSelect={handleSelect} selectedHeroId={null} />);
 
@@ -52,12 +68,12 @@ describe('HeroList', () => {
         fireEvent.click(heroElement);
 
         expect(handleSelect).toHaveBeenCalledTimes(1);
-        expect(handleSelect).toHaveBeenCalledWith('1');
+        expect(handleSelect).toHaveBeenCalledWith(1);
     });
 
     it('disables Prev button on first page and enables Next', async () => {
-        (useHeroes as any).mockReturnValue({ data: heroes, isLoading: false });
-        (useHeroesCount as any).mockReturnValue({ data: 20 });
+        mockedUseHeroes.mockReturnValue({ data: heroes, isLoading: false } as useHeroesMockReturn);
+        mockedUseHeroesCount.mockReturnValue({ data: 20, isLoading: false } as useHeroesCountMockReturn);
 
         renderWithQuery(<HeroList onSelect={() => {}} selectedHeroId={null} />);
 
@@ -69,15 +85,15 @@ describe('HeroList', () => {
     });
 
     it('shows skeletons when loading', () => {
-        (useHeroes as any).mockReturnValue({ isLoading: true });
-        (useHeroesCount as any).mockReturnValue({ data: 0 });
+        mockedUseHeroes.mockReturnValue({ isLoading: true } as useHeroesMockReturn);
+        mockedUseHeroesCount.mockReturnValue({ data: 0, isLoading: false } as useHeroesCountMockReturn);
 
         renderWithQuery(<HeroList onSelect={() => {}} selectedHeroId={null} />);
     });
 
     it('matches snapshot', async () => {
-        (useHeroes as any).mockReturnValue({ data: heroes, isLoading: false });
-        (useHeroesCount as any).mockReturnValue({ data: heroes.length });
+        mockedUseHeroes.mockReturnValue({ data: heroes, isLoading: false } as useHeroesMockReturn);
+        mockedUseHeroesCount.mockReturnValue({ data: heroes.length, isLoading: false } as useHeroesCountMockReturn);
 
         const { asFragment } = renderWithQuery(<HeroList onSelect={() => {}} selectedHeroId={null} />);
         await waitFor(() => screen.getByText('Luke Skywalker'));

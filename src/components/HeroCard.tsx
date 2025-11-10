@@ -1,13 +1,14 @@
+import { memo } from 'react';
 import type { Hero } from '../types/index.ts';
 
 type HeroCardProps = {
     hero: Hero;
-    heroId: string;
+    heroId: number;
     isSelected: boolean;
     onSelect: () => void;
 };
 
-export const HeroCard = ({ hero, isSelected, onSelect }: HeroCardProps) => {
+export const HeroCard = memo(({ hero, isSelected, onSelect }: HeroCardProps) => {
     return (
         <div
             className={`bg-gray-800 border border-gray-700 rounded-md p-3 cursor-pointer hover:bg-gray-700 transition-all hover:shadow-lg hover:shadow-yellow-400/20
@@ -24,4 +25,6 @@ export const HeroCard = ({ hero, isSelected, onSelect }: HeroCardProps) => {
             <p className={`text-sm mt-1 ${isSelected ? "text-black" : "text-gray-400"}`}>Click to view details</p>
         </div>
     );
-};
+}, (prev, next) => { 
+    return prev.isSelected === next.isSelected && prev.hero === next.hero;
+});
